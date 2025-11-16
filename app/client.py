@@ -101,7 +101,7 @@ class SecureChatClient:
         
         # Step 1: Send client hello with certificate
         hello = Hello(cert=b64e(self.client_cert))
-        self.send_message(hello.model_dump(by_alias=True))
+        self.send_message(hello.model_dump())
         
         # Step 2: Receive server hello
         server_hello_data = self.recv_message()
@@ -133,7 +133,7 @@ class SecureChatClient:
         client_dh_public = get_dh_public_key(self.dh_private_key)
         
         dh_client = DHClient(public_key=b64e(client_dh_public))
-        self.send_message(dh_client.model_dump(by_alias=True))
+        self.send_message(dh_client.model_dump())
         
         # Step 5: Receive server's DH public key
         dh_server_data = self.recv_message()
@@ -155,7 +155,7 @@ class SecureChatClient:
     def register(self, username: str, password: str) -> bool:
         """Register a new user."""
         register_msg = Register(username=username, password=password)
-        self.send_message(register_msg.model_dump(by_alias=True))
+        self.send_message(register_msg.model_dump())
         
         response = self.recv_message()
         if response.get("type") == MessageType.ERROR:
@@ -169,7 +169,7 @@ class SecureChatClient:
     def login(self, username: str, password: str) -> bool:
         """Login to the server."""
         login_msg = Login(username=username, password=password)
-        self.send_message(login_msg.model_dump(by_alias=True))
+        self.send_message(login_msg.model_dump())
         
         response = self.recv_message()
         if response.get("type") == MessageType.ERROR:
@@ -206,7 +206,7 @@ class SecureChatClient:
             signature=signature
         )
         
-        self.send_message(msg.model_dump(by_alias=True))
+        self.send_message(msg.model_dump())
         console.print(f"[cyan]You:[/cyan] {text}")
     
     def recv_message_encrypted(self) -> Optional[str]:
@@ -292,7 +292,7 @@ def main():
     
     parser = argparse.ArgumentParser(description="Secure Chat Client")
     parser.add_argument("--host", type=str, default="localhost", help="Server host")
-    parser.add_argument("--port", type=int, default=8888, help="Server port")
+    parser.add_argument("--port", type=int, default=3037, help="Server port")
     args = parser.parse_args()
     
     client = SecureChatClient(host=args.host, port=args.port)
