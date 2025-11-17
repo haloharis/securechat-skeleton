@@ -171,8 +171,13 @@ def save_certificate_files(
     os.makedirs(output_dir, exist_ok=True)
     
     # Determine full paths
-    key_path = os.path.join(output_dir, f"{output_prefix}.key")
-    cert_path = os.path.join(output_dir, f"{output_prefix}.crt")
+    # If output_prefix already includes directory, use it as-is, otherwise join with output_dir
+    if os.path.dirname(output_prefix):
+        key_path = f"{output_prefix}.key"
+        cert_path = f"{output_prefix}.crt"
+    else:
+        key_path = os.path.join(output_dir, f"{output_prefix}.key")
+        cert_path = os.path.join(output_dir, f"{output_prefix}.crt")
     
     # Save private key (PEM format, unencrypted for this assignment)
     with open(key_path, "wb") as f:
@@ -189,13 +194,13 @@ def save_certificate_files(
         # Windows might not support chmod the same way
         pass
     
-    print(f"✓ Private key saved to: {key_path}")
+    print(f"[OK] Private key saved to: {key_path}")
     
     # Save certificate (PEM format)
     with open(cert_path, "wb") as f:
         f.write(certificate.public_bytes(serialization.Encoding.PEM))
     
-    print(f"✓ Certificate saved to: {cert_path}")
+    print(f"[OK] Certificate saved to: {cert_path}")
     
     # Print certificate details
     print(f"\nCertificate Details:")
@@ -279,7 +284,7 @@ def main():
         # Load CA certificate and key
         print(f"Loading CA from {args.ca_cert} and {args.ca_key}...")
         ca_private_key, ca_certificate = load_ca(args.ca_cert, args.ca_key)
-        print("✓ CA loaded successfully")
+        print("[OK] CA loaded successfully")
         print()
         
         # Create certificate signed by CA
@@ -299,14 +304,14 @@ def main():
             output_dir=args.out_dir
         )
         
-        print(f"\n✓ Certificate generated successfully!")
+        print(f"\n[OK] Certificate generated successfully!")
         
     except FileNotFoundError as e:
-        print(f"\n✗ Error: CA files not found. Please generate the CA first:")
+        print(f"\n[ERROR] Error: CA files not found. Please generate the CA first:")
         print(f"  python scripts/gen_ca.py --name 'FAST-NU Root CA'")
         raise
     except Exception as e:
-        print(f"\n✗ Error generating certificate: {e}")
+        print(f"\n[ERROR] Error generating certificate: {e}")
         raise
 
 

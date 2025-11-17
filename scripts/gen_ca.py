@@ -114,13 +114,13 @@ def save_ca_files(private_key, certificate, output_dir: str = "certs"):
             encryption_algorithm=serialization.NoEncryption()
         ))
     os.chmod(key_path, 0o600)  # Restrict permissions (read/write for owner only)
-    print(f"✓ CA private key saved to: {key_path}")
+    print(f"[OK] CA private key saved to: {key_path}")
     
     # Save certificate (PEM format)
     cert_path = os.path.join(output_dir, "ca.crt")
     with open(cert_path, "wb") as f:
         f.write(certificate.public_bytes(serialization.Encoding.PEM))
-    print(f"✓ CA certificate saved to: {cert_path}")
+    print(f"[OK] CA certificate saved to: {cert_path}")
     
     # Print certificate details
     print(f"\nCertificate Details:")
@@ -178,10 +178,10 @@ def main():
         
         save_ca_files(private_key, certificate, output_dir=args.out_dir)
         
-        print(f"\n✓ Root CA generated successfully!")
+        print(f"\n[OK] Root CA generated successfully!")
         
     except Exception as e:
-        print(f"\n✗ Error generating CA: {e}")
+        print(f"\n[ERROR] Error generating CA: {e}")
         raise
 
 
